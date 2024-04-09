@@ -1,27 +1,61 @@
-# ZievoFront
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
+#  Zievo Test - Aplicação Angular/PHP
 
-## Development server
+Bem-vindo ao Zievo Test! Este repositório contém uma aplicação Angular em conjunto com uma API PHP para gerenciamento de vendas e um banco de dados para armazenamento das informações. 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+As instruções do teste podem ser verificadas aqui: [Doc do desafio](https://github.com/matiassingers/awesome-readme)
 
-## Code scaffolding
+O projeto publicado pode ser visualizado no [link](https://github.com/matiassingers/awesome-readme) criado para visualização. 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Rotas para API criada
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+#### Funções se encontram no arquivo principal
 
-## Running unit tests
+```http
+   /api/functions.php
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#### Retorna todos os produtos cadastrados
 
-## Running end-to-end tests
+```http
+  GET /api/apiProdutos.php
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+#### Cadastra novo produto
 
-## Further help
+```http
+  POST /api/apiProdutos.php
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+#### Retorna todas as categorias de produtos
+
+```http
+  GET /api/apiTipoDeProduto.php
+```
+
+#### Cadastra um novo tipo de produto
+
+```http
+  POST /api/apiTipoDeProduto.php
+```
+
+
+#### Retorna todas as vendas
+
+```http
+  GET /api/apiVendas.php
+```
+
+#### Cadastra uma nova venda
+
+```http
+  POST /api/apiVendas.php
+```
+
+## Referência
+
+ - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
+ - [Awesome README](https://github.com/matiassingers/awesome-readme)
+ - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
+
