@@ -4,10 +4,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SalesScreenComponent } from './sales-screen/sales-screen.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    SalesScreenComponent,
   ],
   imports: [
     BrowserModule,

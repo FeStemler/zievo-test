@@ -1,34 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { throwError } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
-import { catchError, delay } from 'rxjs/operators';
+import { delay } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-interface Produtos {
-  id: number;
-  name: string;
-  price: string;
-  type_id: string;
-}
-
-export interface ProductClean {
-  id: number;
-  name: string;
-  price: string;
-  product_type: string;
-  tax_rate: number;
-  tax_value: number;
-  type_id: string;
-  quantity: number;
-  total_value: number;
-}
-
-export interface TypeData {
-  id: number;
-  name: string;
-  tax_rate: number;
-}
+import { ZievoApiService } from './services/zievo-api.service';
+import { ProductClean, Products, TypeData } from './interfaces/product.interface';
 
 
 @Component({
@@ -39,25 +14,33 @@ export interface TypeData {
 export class AppComponent {
   title = 'zievo-front';
 
-  constructor(private http: HttpClient, private formBuilder: FormBuilder) { }
+  constructor(private http: HttpClient, private formBuilder: FormBuilder, public zievoApi: ZievoApiService) { }
 
+  //Variaveis para definição de estado da página
   productAddState: boolean = true;
   categoryAddState: boolean = false;
-  
-  products: Array<Produtos> = [];
-
   selectedScreen: string = 'sales';
-
+  
+  //Arrays para inserção dos valores
+  // Produtos
+  products: Array<Products> = [];
+  //Categorias 
   productTypes: Array<TypeData> = [];
-
+  //Produtos tratados para o front
   productsClean: Array<ProductClean> = [];
-
+  //Listagem de produtos adicionados ao carrinho
   productsToBuy: Array<ProductClean> = [];
 
+  // Valores finais para exibição
+  //Valor total 
   totalValue: number = 0;
+  //Valor total dos impostos
   totalTaxValue: number = 0;
 
+  // Formularios
+  // Formulario adição de produto
   productForm!: FormGroup;
+  // Formulario adição de categoria do produto
   typeDataForm!: FormGroup;
 
   ngOnInit(): void {
@@ -73,7 +56,7 @@ export class AppComponent {
       tax_rate: ['', Validators.required]
     });
 
-    this.carregarProdutos().subscribe(
+    this.zievoApi.carregarProdutos().subscribe(
       products => {
         this.products = products;
         console.log(this.products)
@@ -82,7 +65,7 @@ export class AppComponent {
         console.error('Erro ao carregar os produtos:', error);
       }
     );
-    this.carregarTiposDeProdutos().pipe(
+    this.zievoApi.carregarTiposDeProdutos().pipe(
       delay(500) // Adiciona um atraso de 500 milissegundos
     ).subscribe(
       productTypes => {
@@ -198,12 +181,12 @@ export class AppComponent {
       const type_id = this.productForm.get('type_id')?.value;
       const price = this.productForm.get('price')?.value;
 
-      this.cadastrarProduto(name, type_id, price).subscribe(
+      this.zievoApi.cadastrarProduto(name, type_id, price).subscribe(
         response => {
 
           // Aqui você pode verificar a resposta da requisição e tomar as ações necessárias
           console.log('Resposta da requisição:', response);
-          this.carregarProdutos().subscribe(
+          this.zievoApi.carregarProdutos().subscribe(
             products => {
               this.products = products;
               console.log(this.products)
@@ -243,9 +226,9 @@ export class AppComponent {
     const name = this.typeDataForm.value.name;
     const tax_rate = this.typeDataForm.value.tax_rate;
 
-    this.cadastrarTipoProduto(name, tax_rate).subscribe(
+    this.zievoApi.cadastrarTipoProduto(name, tax_rate).subscribe(
       response => {
-        this.carregarTiposDeProdutos().pipe(
+        this.zievoApi.carregarTiposDeProdutos().pipe(
           delay(500) // Adiciona um atraso de 500 milissegundos
         ).subscribe(
           productTypes => {
@@ -284,7 +267,7 @@ export class AppComponent {
 
    // Função para registrar a venda
    onSaleSubmit() {
-    this.sendSales(this.productsToBuy).subscribe(
+    this.zievoApi.sendSales(this.productsToBuy).subscribe(
       response => {
         console.log(this.productsToBuy)
         // Aqui você pode lidar com a resposta da requisição
@@ -297,61 +280,5 @@ export class AppComponent {
     );
   }
 
-  cadastrarProduto(name: string, type_id: number, price: number): Observable<any> {
-    // Define o corpo da requisição
-    const body = {
-      action: 'cadastrar_produto', // Define a ação como 'cadastrar_produto'
-      name: name, // Nome do produto
-      type_id: type_id, // ID do tipo de produto
-      price: price // Preço do produto
-    };
-
-    // Define os cabeçalhos da requisição
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-
-    // Faz a requisição POST para a API
-    return this.http.post<any>('http://localhost/zievo-test/api/apiProdutos.php', body, { headers: headers });
-  }
-
-  cadastrarTipoProduto(name: string, tax_rate: number): Observable<any> {
-    // Define o corpo da requisição
-    const body = {
-      name: name,
-      tax_rate: tax_rate
-    };
-
-    // Define os cabeçalhos da requisição
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-
-    // Faz a requisição POST para a API
-    return this.http.post<any>('http://localhost/zievo-test/api/apiTipoProdutos.php', body, { headers: headers });
-  }
-
-  sendSales(items: ProductClean[]): Observable<any> {
-    // Mapeie os itens de venda para incluir apenas os dados necessários
-    const itemsToSend = items.map(item => ({
-      product_id: item.id,
-      quantity: item.quantity, 
-      subtotal: +item.price * item.quantity, 
-      tax_amount: +item.tax_value * item.quantity
-    }));
-
-    // Defina o corpo da requisição
-    const body = { items: itemsToSend };
-
-    console.log(body)
-    // Defina os cabeçalhos da requisição
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-
-    // Faça a requisição POST para a API
-    return this.http.post<any>('http://localhost/zievo-test/api/apiVendas.php', body, { headers: headers });
-  }
-
-  carregarProdutos() {
-    return this.http.get<any[]>('http://localhost/zievo-test/api/apiProdutos.php');
-  }
-
-  carregarTiposDeProdutos() {
-    return this.http.get<any[]>('http://localhost/zievo-test/api/apiTipoProdutos.php');
-  }
+  
 }

@@ -17,16 +17,20 @@
       </button>
     </div>
   </div>
-  <div class="content w-[80%] p-14 overflow-y-scroll">
-    <div *ngIf="selectedScreen == 'products'" class="content-products show">
+  <div class=" content w-[80%] p-14 overflow-y-scroll">
+    <div *ngIf="selectedScreen == 'products'" class="content-products show container mx-auto">
       <div class="product-head flex items-end justify-between">
         <div class="mb-5">
           <h1 class="text-3xl">Bem Vindo, Cliente</h1>
           <p class="text-xl">Esses são nossos produtos atuais</p>
         </div>
         <div class="mr-3 flex items-end gap-x-4">
-          <button [ngClass]="{'!bg-black': productAddState == true,'!text-white': productAddState == true}" class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2" (click)="changeProductAddState()">+ Produtos</button>
-          <button [ngClass]="{'!bg-black': categoryAddState == true,'!text-white': categoryAddState == true}" class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2" (click)="changeCategoryAddState()"> + Categorias</button>
+          <button [ngClass]="{'!bg-black': productAddState == true,'!text-white': productAddState == true}"
+            class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
+            (click)="changeProductAddState()">+ Produtos</button>
+          <button [ngClass]="{'!bg-black': categoryAddState == true,'!text-white': categoryAddState == true}"
+            class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
+            (click)="changeCategoryAddState()"> + Categorias</button>
         </div>
       </div>
       <div *ngIf="productAddState == true" class="productAdd">
@@ -34,16 +38,19 @@
           <p class="">Adicionar produto</p>
           <form class="flex items-center gap-8" [formGroup]="productForm" (ngSubmit)="onProductSubmit()">
 
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name" placeholder="Nome do produto">
+            <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
+              placeholder="Nome do produto">
 
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="price" formControlName="price" placeholder="Preço do produto" min="0">
+            <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="price" formControlName="price"
+              placeholder="Preço do produto" min="0">
 
             <select class="bg-white text-black px-7 py-1 rounded-xl" formControlName="type_id">
               <option class="" value="" selected>Selecione a categoria</option>
               <option *ngFor="let type of productTypes" [value]="type.id">{{ type.name }}</option>
             </select>
 
-            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit" [disabled]="productForm.invalid">Submit</button>
+            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
+              [disabled]="productForm.invalid">Submit</button>
           </form>
         </div>
       </div>
@@ -51,12 +58,15 @@
         <div class="bg-black text-white flex items-center justify-between p-4 rounded-xl">
           <p class="">Adicionar categoria</p>
           <form class="flex items-center gap-8" [formGroup]="typeDataForm" (ngSubmit)="onTypeDataSubmit()">
-          
-              <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name" placeholder="Nome do produto">
-            
-              <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="tax_rate" formControlName="tax_rate" max="100" placeholder="Taxa sob o produto">
-            
-            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit" [disabled]="typeDataForm.invalid">Submit</button>
+
+            <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
+              placeholder="Nome do produto">
+
+            <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="tax_rate"
+              formControlName="tax_rate" max="100" placeholder="Taxa sob o produto">
+
+            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
+              [disabled]="typeDataForm.invalid">Submit</button>
           </form>
         </div>
       </div>
@@ -147,7 +157,7 @@
               class="w-[80%] bg-black px-10 py-5 fixed bottom-0 right-0 text-white flex items-center justify-end rounded-t-3xl">
               <h1 class="mx-10 text-xl">Imposto total: ${{totalTaxValue}}</h1>
               <h1 class="mx-10 text-xl">Total: ${{totalValue}}</h1>
-              <button  (click)="onSaleSubmit()" class="bg-white text-black px-7 py-2 text-xl rounded-xl">Comprar</button>
+              <button (click)="onSaleSubmit()" class="bg-white text-black px-7 py-2 text-xl rounded-xl">Comprar</button>
             </div>
 
           </div>
@@ -158,18 +168,7 @@
 
     </div>
     <div *ngIf="selectedScreen == 'sales'" class="content-sales">
-      <div class="product-head flex items-end justify-between">
-        <div class="mb-5">
-          <h1 class="text-3xl">Bem Vindo, Administrador</h1>
-          <p class="text-xl">Essas foram as suas vendas</p>
-        </div>
-       
-      </div>
-      <div class="grid grid-cols-3 gap-8">
-        <div class="bg-black rounded-xl shadow-xl aspect-video"> </div>
-        <div class="bg-black rounded-xl shadow-xl aspect-video"> </div>
-        <div class="bg-black rounded-xl shadow-xl aspect-video"> </div>
-      </div>
+      <app-sales-screen></app-sales-screen>
     </div>
   </div>
 </div>
