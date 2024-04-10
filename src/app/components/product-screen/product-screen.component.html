@@ -1,0 +1,168 @@
+<div class="content-products show container mx-auto">
+
+    <!-- Cabeçalho da tela -->
+    <div class="product-head flex items-end justify-between">
+        <div class="mb-5">
+            <h1 class="text-3xl font-thin">Bem Vindo, <span class="font-bold">Cliente</span></h1>
+            <p class="text-xl">Esses são nossos produtos atuais</p>
+        </div>
+
+        <!-- Botões para definição do tipo de cadastro ao ser feito -->
+        <div class="mr-3 flex items-end gap-x-4">
+            <!-- Botão para adicionar produtos -->
+            <button [ngClass]="{'!bg-black': stateControl.productAddState == true,'!text-white': stateControl.productAddState == true}"
+                class="font-black bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
+                (click)="stateControl.changeProductAddState()">+ Produtos</button>
+            <!-- Botão para adicionar categorias -->
+            <button [ngClass]="{'!bg-black': stateControl.categoryAddState == true,'!text-white': stateControl.categoryAddState == true}"
+                class="font-black bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
+                (click)="stateControl.changeCategoryAddState()"> + Categorias</button>
+        </div>
+    </div>
+
+    <!-- Sessão para inserção de produto -->
+    <div *ngIf="stateControl.productAddState == true" class="productAdd">
+        <div class="bg-black text-white flex items-center justify-between p-4 rounded-xl">
+            <p>Adicionar produto</p>
+            <!-- Formulário para adicionar produto -->
+            <form class="flex items-center gap-8" [formGroup]="productForm" (ngSubmit)="onProductSubmit()">
+                <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
+                    placeholder="Nome do produto">
+                <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="price" formControlName="price"
+                    placeholder="Preço do produto" min="0">
+                <select (click)="stateControl.validateCategory(this.productTypes)" class="bg-white text-black px-7 py-1 rounded-xl"
+                    formControlName="type_id">
+                    <option class="" value="" selected disabled>Selecione a categoria</option>
+                    <!-- Opções de categoria -->
+                    <option *ngFor="let type of productTypes" [value]="type.id">{{ type.name }}</option>
+                </select>
+                <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
+                    [disabled]="productForm.invalid">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sessão para inserção de categoria -->
+    <div *ngIf="stateControl.categoryAddState == true" class="categoryAdd">
+        <div class="bg-black text-white flex items-center justify-between p-4 rounded-xl">
+            <p class="">Adicionar categoria</p>
+            <!-- Formulário para adicionar categoria -->
+            <form class="flex items-center gap-8" [formGroup]="typeDataForm" (ngSubmit)="onTypeDataSubmit()">
+                <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
+                    placeholder="Nome da categoria">
+                <div class="flex items-center">
+                    <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="tax_rate"
+                        formControlName="tax_rate" placeholder="Imposto sob a categoria">
+                    <h3 class="ml-2">%</h3>
+                </div>
+                <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
+                    [disabled]="typeDataForm.invalid">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela de produtos -->
+    <div class="product-items relative">
+        <div class="container mx-auto py-6 pb-[100px]">
+            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <!-- Cabeçalho da tabela -->
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Item
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Categoria
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Preço
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Imposto sob o produto
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Quantidade
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Valor do imposto
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                                Total
+                            </th>
+                        </tr>
+                    </thead>
+                    <!-- Corpo da tabela -->
+                    <tbody *ngFor="let item of productsClean" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <!-- Nome do produto -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-black text-gray-900">
+                                    {{item['name']}}
+                                </div>
+                            </td>
+                            <!-- Categoria do produto -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{item['product_type']}}</div>
+                            </td>
+                            <!-- Preço do produto -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{item['price'] | currency:'BRL':'symbol':'1.2-2' }}
+                                </div>
+                            </td>
+                            <!-- Imposto sob o produto -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{item['tax_rate']}}%</div>
+                            </td>
+                            <!-- Quantidade -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <div class="">
+                                        <!-- Botões para aumentar ou diminuir a quantidade -->
+                                        <button (click)="counter('-', item['id'])"
+                                            class="bg-[#f7f4f4] w-[25px] h-[25px] rounded-lg shadow-sm text-bold mr-1 hover:bg-black hover:text-white">-</button>
+                                        {{item['quantity']}}
+                                        <button
+                                            class="bg-[#f7f4f4] w-[25px] h-[25px] rounded-lg shadow-sm text-bold ml-1 hover:bg-black hover:text-white"
+                                            (click)="counter('+', item['id'])">+</button>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- Valor do imposto -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    {{(+item['tax_value']) * (+item['quantity']) | currency:'BRL':'symbol':'1.2-2' }}
+                                </div>
+                            </td>
+                            <!-- Total -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    {{item.total_value | currency:'BRL':'symbol':'1.2-2' }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Sessão de finalização da compra -->
+                <div class="w-[80%] bg-black px-10 py-5 fixed bottom-0 right-0 text-white flex items-center justify-end rounded-t-3xl">
+                    <div class="flex items-center">
+                        <!-- Imposto total e total -->
+                        <h1 class="mx-10 text-xl">Imposto total: ${{totalTaxValue | number : '1.2-2'}}</h1>
+                        <h1 class="mx-10 text-xl">Total: ${{totalValue | number : '1.2-2'}}</h1>
+                        <!-- Botão para finalizar a compra -->
+                        <button (click)="onSaleSubmit()" [disabled]="productsToBuy.length === 0"
+                            class="bg-white text-black px-7 py-2 text-xl rounded-xl disabled:opacity-50">Comprar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

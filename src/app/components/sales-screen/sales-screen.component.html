@@ -1,0 +1,223 @@
+<div class="container mx-auto">
+    <!-- Cabeçalho da página -->
+    <div class="product-head flex items-end justify-between">
+        <div class="mb-5">
+            <h1 class="text-3xl font-thin">Bem Vindo, <span class="font-black">Administrador</span></h1>
+            <p class="text-xl">Essas foram as suas vendas</p>
+        </div>
+    </div>
+
+    <!-- Grid com informações de vendas -->
+    <div class="grid grid-cols-3 gap-8">
+        <!-- Bloco com o total de impostos -->
+        <div class="bg-black rounded-xl shadow-xl text-white p-10">
+            <h3 class="text-lg">Total de impostos</h3>
+            <h1 class="text-3xl font-bold">{{totalTax | currency:'BRL':'symbol':'1.2-2' }}</h1>
+        </div>
+
+        <!-- Bloco com o total líquido -->
+        <div class="bg-black rounded-xl shadow-xl text-white p-10">
+            <h3 class="text-lg">Total líquido</h3>
+            <h1 class="text-3xl font-bold">{{totalNet | currency:'BRL':'symbol':'1.2-2' }}</h1>
+        </div>
+
+        <!-- Bloco com o total recebido -->
+        <div class="bg-black rounded-xl shadow-xl text-white p-10">
+            <h3 class="text-lg">Total recebido</h3>
+            <h1 class="text-3xl font-bold">{{totalValue | currency:'BRL':'symbol':'1.2-2' }}</h1>
+        </div>
+    </div>
+
+    <!-- Tabela de vendas -->
+    <div class="product-items relative">
+        <div class="container mx-auto py-6 pb-[100px]">
+            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <!-- Cabeçalho da tabela -->
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Id da venda
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Data
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Valor dos produtos
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Quantidade de items
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Valor do imposto
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            </th>
+                        </tr>
+                    </thead>
+                    <!-- Corpo da tabela -->
+                    <ng-container *ngFor="let sale of sales; let i=index">
+                        <tbody (click)="indexExpanded=indexExpanded==i?-1:i;"
+                            [ngClass]="{'!bg-black':indexExpanded == i}"
+                            class="group bg-white divide-y divide-gray-200 cursor-pointer hover:bg-black hover:text-white">
+                            <tr>
+                                <!-- ID da venda -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        {{sale.id}}
+                                    </div>
+                                </td>
+                                <!-- Data da venda -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        {{ formattedDate(sale.sale_date)[0]}} às
+                                        {{formattedDate(sale.sale_date)[1]}}
+                                    </div>
+                                </td>
+                                <!-- Valor dos produtos -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        R$ {{sale.total_amount | number : '1.2-2'}}
+                                    </div>
+                                </td>
+                                <!-- Quantidade de itens -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        <div *ngIf="sale && sale.itens">
+                                            {{ sale.itens.length }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- Valor do imposto -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        R$ {{sale.total_tax | number : '1.2-2'}}
+                                    </div>
+                                </td>
+                                <!-- Total -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        R$ {{+sale.total_amount + +sale.total_tax | number : '1.2-2'}}
+                                    </div>
+                                </td>
+                                <!-- Ícone de expandir/recolher -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 group-hover:text-white"
+                                        [ngClass]="{'!text-white':indexExpanded == i}">
+                                        <img *ngIf="indexExpanded !== i" src="assets/images/plus.svg" alt="">
+                                        <img *ngIf="indexExpanded == i" src="assets/images/minus.svg" alt="">
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Tabela aninhada com os itens da venda -->
+                            <tr *ngIf="indexExpanded == i" class="bg-white cursor-default"
+                                (click)="$event.stopPropagation()">
+                                <td colspan="7">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Item
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Categoria
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Preço
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Imposto sob o produto
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Quantidade
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Valor do imposto
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Total
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngFor="let item of sale.itens"
+                                            class="bg-white divide-y divide-gray-200">
+                                            <tr>
+                                                <!-- Nome do produto -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm font-medium text-black">
+                                                        {{getProductName(item.product_id)}}
+                                                    </div>
+                                                </td>
+                                                <!-- Categoria do produto -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        {{getCategoryName(item.product_id)}}
+                                                    </div>
+                                                </td>
+                                                <!-- Preço do produto -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        {{getProductPrice(item.product_id) |
+                                                        currency:'BRL':'symbol':'1.2-2'}}</div>
+                                                </td>
+                                                <!-- Imposto sob o produto -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        {{getCategoryTax(item.product_id) |number : '1.0-0'}}%
+                                                    </div>
+                                                </td>
+                                                <!-- Quantidade -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        <div class="">
+                                                            {{item['quantity']}}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <!-- Valor do imposto -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        {{( item.tax_amount| currency:'BRL':'symbol':'1.2-2') }}
+                                                    </div>
+                                                </td>
+                                                <!-- Total -->
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-black">
+                                                        {{item.subtotal | currency:'BRL':'symbol':'1.2-2' }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </ng-container>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

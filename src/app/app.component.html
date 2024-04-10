@@ -1,174 +1,39 @@
-<div class="dashboard h-[100vh] bg-[#F7F7F7] flex ">
-  <div class="sidebar w-[20%] bg-white p-14">
+<div class="dashboard h-[100vh] bg-[#F7F7F7] flex space-grotesk font-medium overflow-hidden">
+  <!-- Sidebar -->
+  <div class="sidebar w-[20%] bg-white p-14 relative h-[100vh] overflow-hidden">
     <div class="logo w-3/5 mb-5 pl-4">
       <img src="assets/images/logo-dark.svg" alt="">
     </div>
-
-    <div class="menu w-full">
-      <button (click)='selectScreen("products")' [ngClass]="{'bg-white invert-[1]': selectedScreen == 'products'}"
+    <!-- Menu -->
+    <div class="menu w-full ">
+      <button (click)='stateControl.selectScreen("products")' [ngClass]="{'bg-white invert-[1]': stateControl.selectedScreen == 'products'}"
         class="flex items-center w-full mt-4 rounded-xl hover:bg-white hover:invert-[1]  p-4">
         <img class="w-[30px] mr-4" src="assets/images/product.svg" alt="">
-        <h3 class='mb-0'>Produtos</h3>
+        <h3 class='mb-0 font-bold'>Produtos</h3>
       </button>
-      <button (click)='selectScreen("sales")' [ngClass]="{'bg-white invert-[1]': selectedScreen == 'sales'}"
+      <button (click)='stateControl.selectScreen("sales")' [ngClass]="{'bg-white invert-[1]': stateControl.selectedScreen == 'sales'}"
         class="flex items-center w-full mt-4 rounded-xl hover:bg-white hover:invert-[1] p-4">
         <img class="w-[30px] mr-4" src="assets/images/sales.svg" alt="">
-        <h3 class='mb-0'>Vendas</h3>
+        <h3 class='mb-0 font-bold'>Vendas</h3>
       </button>
     </div>
+    <!-- Caixa de mensagem -->
+    <div [ngClass]="{'bottom-[-80px]': stateControl.messageState == false}"
+      class="absolute transition-all ease-in-out left-0 bottom-0 w-full duration-200">
+      <div class="bg-black w-[90%] mx-auto mb-4 rounded-lg p-4">
+        <h2 class="text-white" [innerText]="stateControl.popMessage"></h2>
+      </div>
+    </div>
   </div>
-  <div class=" content w-[80%] p-14 overflow-y-scroll">
-    <div *ngIf="selectedScreen == 'products'" class="content-products show container mx-auto">
-      <div class="product-head flex items-end justify-between">
-        <div class="mb-5">
-          <h1 class="text-3xl">Bem Vindo, Cliente</h1>
-          <p class="text-xl">Esses são nossos produtos atuais</p>
-        </div>
-        <div class="mr-3 flex items-end gap-x-4">
-          <button [ngClass]="{'!bg-black': productAddState == true,'!text-white': productAddState == true}"
-            class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
-            (click)="changeProductAddState()">+ Produtos</button>
-          <button [ngClass]="{'!bg-black': categoryAddState == true,'!text-white': categoryAddState == true}"
-            class="bg-transparent text-lg rounded-xl rounded-b-none border-black border-2 border-b-0 hover:bg-black hover:text-white hover:rounded-b-none p-4 py-2"
-            (click)="changeCategoryAddState()"> + Categorias</button>
-        </div>
-      </div>
-      <div *ngIf="productAddState == true" class="productAdd">
-        <div class="bg-black text-white flex items-center justify-between p-4 rounded-xl">
-          <p class="">Adicionar produto</p>
-          <form class="flex items-center gap-8" [formGroup]="productForm" (ngSubmit)="onProductSubmit()">
-
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
-              placeholder="Nome do produto">
-
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="price" formControlName="price"
-              placeholder="Preço do produto" min="0">
-
-            <select class="bg-white text-black px-7 py-1 rounded-xl" formControlName="type_id">
-              <option class="" value="" selected>Selecione a categoria</option>
-              <option *ngFor="let type of productTypes" [value]="type.id">{{ type.name }}</option>
-            </select>
-
-            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
-              [disabled]="productForm.invalid">Submit</button>
-          </form>
-        </div>
-      </div>
-      <div *ngIf="categoryAddState == true" class="categoryAdd">
-        <div class="bg-black text-white flex items-center justify-between p-4 rounded-xl">
-          <p class="">Adicionar categoria</p>
-          <form class="flex items-center gap-8" [formGroup]="typeDataForm" (ngSubmit)="onTypeDataSubmit()">
-
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="text" id="name" formControlName="name"
-              placeholder="Nome do produto">
-
-            <input class="bg-white text-black px-7 py-1 rounded-xl" type="number" id="tax_rate"
-              formControlName="tax_rate" max="100" placeholder="Taxa sob o produto">
-
-            <button class="bg-white text-black px-7 py-1 rounded-xl disabled:opacity-50" type="submit"
-              [disabled]="typeDataForm.invalid">Submit</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="product-items relative">
-        <div class="container mx-auto py-6 pb-[100px]">
-
-          <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Categoria
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Preço
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    imposto sob o produto
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Quantidade
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Valor do imposto
-                  </th>
-                  <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody *ngFor="let item of productsClean" class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">
-                      {{item['name']}}
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">{{item['product_type']}}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">${{item['price']}}
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">{{item['tax_rate']}}%</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">
-                      <div class="">
-                        <button (click)="counter('-', item['id'])"
-                          class="bg-[#f7f4f4] w-[25px] h-[25px] rounded-lg shadow-sm text-bold mr-1 hover:bg-black hover:text-white">-</button>
-                        {{item['quantity']}}
-                        <button
-                          class="bg-[#f7f4f4] w-[25px] h-[25px] rounded-lg shadow-sm text-bold ml-1 hover:bg-black hover:text-white"
-                          (click)="counter('+', item['id'])">+</button>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">$
-                      {{(+item['tax_value']) * (+item['quantity'])}}
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">$
-                      {{item.total_value}}
-                    </div>
-                  </td>
-                </tr>
-
-
-              </tbody>
-            </table>
-
-            <div
-              class="w-[80%] bg-black px-10 py-5 fixed bottom-0 right-0 text-white flex items-center justify-end rounded-t-3xl">
-              <h1 class="mx-10 text-xl">Imposto total: ${{totalTaxValue}}</h1>
-              <h1 class="mx-10 text-xl">Total: ${{totalValue}}</h1>
-              <button (click)="onSaleSubmit()" class="bg-white text-black px-7 py-2 text-xl rounded-xl">Comprar</button>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-    <div *ngIf="selectedScreen == 'sales'" class="content-sales">
-      <app-sales-screen></app-sales-screen>
-    </div>
+  <!-- Sessão conteudo -->
+  <div class="content w-[80%] p-14 overflow-y-scroll">
+    <!-- Tela de produtos -->
+    <ng-container *ngIf="stateControl.selectedScreen == 'products'">
+      <app-product-screen  (onSaveOnDatabase)="onSaveProduct($event)" [products]="productsClean" [productTypes]="productTypes" [productsClean]="productsClean"></app-product-screen>
+    </ng-container>
+    <!-- Tela de vendas -->
+    <ng-container *ngIf="stateControl.selectedScreen == 'sales'">
+      <app-sales-screen [products]="productsClean" [productTypes]="productTypes"></app-sales-screen>
+    </ng-container>
   </div>
 </div>

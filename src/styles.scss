@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+// <uniquifier>: Use a unique and descriptive class name
+// <weight>: Use a value from 100 to 900
+
+.space-grotesk {
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+@layer base {
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+input {
+    text-align: right;
+}
+
+/* Defina a largura da barra de rolagem para ser fina */
+
+.tableWrap::-webkit-scrollbar {
+    width: 6px;
+    /* Largura da barra de rolagem */
+    background-color: transparent;
+    /* Cor de fundo da barra de rolagem */
+}
+
+/* Estilizando o polegar da barra de rolagem */
+.tableWrap::-webkit-scrollbar-thumb {
+    background-color: gray;
+    margin-right: 2px;
+    /* Cor do polegar da barra de rolagem */
+    border-radius: 6px;
+    /* Arredondamento das bordas do polegar */
+}
+
+
+/* Defina a cor do fundo da barra de rolagem */
+.tableWrap::-webkit-scrollbar-track {
+    background: transparent;
+}
